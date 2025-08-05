@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+
+
+<script nonce="<!--# echo var='nonce' -->">
+<!--#include virtual="/shared-code.js" -->
+</script>
+
+<script nonce="<!--# echo var='nonce' -->">
+const DEBUG_MODE = false; // Set to `true` in development, `false` in production
+
+if (!DEBUG_MODE) {
+  console.log = () => {}; // Silences all console.log calls
+}
+
+
+
+var global_window_letsgo = false;
+var global_window_swLog = [];
+
+
+
+// Ensure that the browser supports the service worker API
+if ('serviceWorker' in navigator) {
+// Listen for service worker messages
+  navigator.serviceWorker.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SW_RELOAD_PAGE') {
+      console.log('New version available, reloading...');
+      window.location.reload(true); // Force reload from server
+    }
+  });
+  // Start registration process on every page load
+  //window.addEventListener('load', () => {
+  navigator.serviceWorker
+  // The register function takes as argument
+  // the file path to the worker's file
+  .register('/sw.js')
+  // Gives us registration object
+  .then( (registration) => {
+    registration.update();
+
+    global_window_letsgo = true;
+    //console.log('SW registered OK: ', registration);
+    global_window_swLog.push(`OK SW registered: ${registration.scope}`);
+
+    // Optional: Listen for controller changes
+    /*
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      console.log('New SW controlling the page');
+    });
+    */
+
+    // iOS: Combat update starvation
+    const updateInterval = setInterval(() => {
+      registration.update().catch((err) => { console.log(`setInterval() registration.update() Error: ${err}`); });
+    }, 10000);
+
+    // Optional: Update on visibility change
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) registration?.update();
+        refreshPage();
+      });
+
+  } )
+  .catch( (error) => {
+    global_window_letsgo = false;
+    //console.log('SW registration error: ', error);
+    global_window_swLog.push(`SW registration error: ${error.message}`);
+
+  } );
+  //} );
+}
+else {
+  global_window_letsgo = true;
+  //console.log('Warning: SW not supported by browser');
+  global_window_swLog.push('Warning: SW not supported by browser');
+  refreshPage();
+}
+</script>
+
+
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>countdown.travel app</title>
+
+
+
+</head>
+
+
+
+<body>
+
+
+
+<span id="version">?</span>
+
+
+
+<script nonce="<!--# echo var='nonce' -->">
+function refreshPage() {
+}
+
+
+
+function myGlobalFunc() {
+
+
+
+document.getElementById('version').textContent = CACHE_NAME.split(' ')[1];
+
+
+
+} // myGlobalFunc()
+
+
+
+document.addEventListener("DOMContentLoaded", myGlobalFunc);
+</script>
+
+</body>
+
+</html>
