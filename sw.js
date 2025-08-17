@@ -24,7 +24,7 @@ const URLS_TO_CACHE = [
   , '/manifest.json'
   , '/icon512_maskable2.png'
   , '/icon512_rounded2.png'
-  , '/styles.css'
+  , '/styles2.css'
   , '/lz-string.js'
   , '/country-to-currency.min.js'
   , '/currency.min.js'
@@ -36,6 +36,9 @@ const URLS_TO_CACHE = [
   , '/countries-110m.json'
   , '/all.js'
   , '/Aileron-Regular.otf'
+  , '/LibertinusSans-Regular.ttf'
+  , '/LibertinusSans-Bold.ttf'
+  , '/LibertinusSans-Italic.ttf'
 ];
 
 

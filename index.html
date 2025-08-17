@@ -60,9 +60,11 @@ if ('serviceWorker' in navigator) {
 
     // Optional: Update on visibility change
     document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) registration?.update();
+      if (!document.hidden) {
+        registration?.update();
         refreshPage();
-      });
+      }
+    });
 
   } )
   .catch( (error) => {
@@ -76,8 +78,12 @@ if ('serviceWorker' in navigator) {
 else {
   global_window_letsgo = true;
   //console.log('Warning: SW not supported by browser');
-  global_window_swLog.push('Warning: SW not supported by browser');
-  refreshPage();
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      refreshPage();
+    }
+  });
 }
 </script>
 
