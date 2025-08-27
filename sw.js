@@ -155,6 +155,40 @@ self.addEventListener('activate', e => {
 
 
 
+function shouldRedirect(pathname) {
+  if (pathname == '/how-to-use-as-a-traveler.html') {
+    return '/user-help/';
+  }
+  if (pathname == '/user-help') {
+    return '/user-help/';
+  }
+
+  if (pathname == '/how-to-place-your-ad.html') {
+    return '/merchant-help/';
+  }
+  if (pathname == '/merchant-help') {
+    return '/merchant-help/';
+  }
+
+  if (pathname == '/road-map.html') {
+    return '/road-map/';
+  }
+  if (pathname == '/road-map') {
+    return '/road-map/';
+  }
+
+  if (pathname == '/about-us.html') {
+    return '/about-us/';
+  }
+  if (pathname == '/about-us') {
+    return '/about-us/';
+  }
+
+  return null;
+}
+
+
+
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
@@ -188,6 +222,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  const urlObj = new URL(event.request.url);
+  const redirPathname = shouldRedirect(urlObj.pathname);
+
+  if ((event.request.mode == 'navigate') && redirPathname) {
+    event.respondWith(handleOrdinaryRequest301(event.request, redirPathname));
+    return;
+  }
+
   // Your existing GET handler for normal requests
   event.respondWith(handleOrdinaryRequest(event.request));
 });
@@ -210,6 +252,13 @@ function convertSearchParamsToJsonObject(searchString) {
 
 function convertJsonObjectToSearchParams(obj) {
   return new URLSearchParams(obj).toString();
+}
+
+
+
+async function handleOrdinaryRequest301(request, redirPath) {
+  const urlObj = new URL(request.url);
+  return Response.redirect(urlObj.origin + redirPath + urlObj.search, 301); // + urlObj.search
 }
 
 
